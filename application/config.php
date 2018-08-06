@@ -15,9 +15,9 @@ return [
     // +----------------------------------------------------------------------
 
     // 应用调试模式
-    'app_debug'              => false,
+    'app_debug'              => true,
     // 应用Trace
-    'app_trace'              => false,
+    'app_trace'              => true,
     // 应用模式状态
     'app_status'             => '',
     // 是否支持多模块
@@ -235,5 +235,12 @@ return [
         'type'      => 'bootstrap',
         'var_page'  => 'page',
         'list_rows' => 15,
+    ],
+
+    // 视图输出字符串内容替换
+    'view_replace_str'       => [
+        '__SCRIPT__'=> PUBLIC_DIR . '/script',    //前端网页css,img,js所在文件
+        '__STATIC__'=> PUBLIC_DIR . '/static',   //后台程序css,img,js所在文件
+        // '__COMMON__'=> PUBLIC_DIR . '/common',   //前后共有css,img,js所在文件
     ],
 ];
