@@ -231,12 +231,17 @@ return [
     ],
 
     //分页配置
-    'paginate'               => [
-        'type'      => 'bootstrap',
+//    'paginate'               => [
+//        'type'      => 'bootstrap',
+//        'var_page'  => 'page',
+//        'list_rows' => 15,
+//    ],
+    'paginate'      => [
+        'type'      => 'Layui',
         'var_page'  => 'page',
-        'list_rows' => 15,
+        'list_rows' => 10,
+        'newstyle'  => true,
     ],
-
     // 视图输出字符串内容替换
     'view_replace_str'       => [
         '__SCRIPT__'=> PUBLIC_DIR . '/script',    //前端网页css,img,js所在文件

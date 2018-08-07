@@ -1,0 +1,180 @@
+{include file="common/header" /}
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="{:url('Admin/index/welCome')}">首页</a>
+        <a>
+          <cite>标签列表</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so layui-form-pane"">
+            <input type="text" name="tagname"  placeholder="标签名" autocomplete="off" class="layui-input" lay-verify="required|max:10">
+            <button class="layui-btn"  lay-submit="" lay-filter="add">
+                <i class="layui-icon"></i>添加</button>
+        </form>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <span class="x-right" style="line-height:40px">共有数据：10086 条</span>
+    </xblock>
+    <table class="layui-table layui-form">
+        <thead>
+        <tr>
+            <th width="20">
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
+                    <!--<i class="layui-icon">&#xe605;</i></div>-->
+                <input type="checkbox" lay-skin="primary" lay-filter="checkAll">
+                </div>
+            </th>
+            <th width="70">ID</th>
+            <th>标签名</th>
+            <th width="220">操作</th>
+        </thead>
+        <tbody id="x-cate">
+        {volist name="tags" id="vo"}
+        <tr cate-id='1' fid='0'>
+            <td>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'>
+                    <input type="checkbox" value="{$vo.tid}" name="check" lay-skin="primary">
+                </div>
+            </td>
+            <td>{$vo.tid}</td>
+            <td>
+                {$vo.tagname}
+            </td>
+            <td class="td-manage">
+                <button class="layui-btn layui-btn layui-btn-xs" onclick="x_admin_show('编辑','admin-edit.html')"><i
+                    class="layui-icon">&#xe642;</i>编辑
+                </button>
+                <button class="layui-btn-danger layui-btn layui-btn-xs" onclick="tag_del(this,{$vo.tid})"
+                        href="javascript:;"><i class="layui-icon">&#xe640;</i>删除
+                </button>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    <div class="layui-box layui-laypage layui-laypage-default">{$tags->render()}</div>
+</div>
+<style type="text/css">
+
+</style>
+<script>
+    layui.use(['form'], function () {
+        form = layui.form;
+        //全选
+        form.on('checkbox(checkAll)', function(data){
+            $("input[type='checkbox']").prop("checked", data.elem.checked);
+            form.render('checkbox');
+        });
+
+        //添加标签
+        form.on('submit(add)', function(data){
+            var tagname = $('input[name="tagname"]').val();
+            //发异步，把数据提交给php
+            //发异步删除数据
+            $.ajax({
+                url:"{:url('Admin/tags/add')}",
+                data:{'tagname':tagname},
+                type: "post" ,
+                dataType:'json',
+                success:function(status){
+                    if(status.status){
+                        layer.msg("增加成功", {icon: 1});
+                        var _html = '<tr cate-id=\'1\' fid=\'0\'>\n' +
+                            '<td>\n' +
+                            '<div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id=\'2\'>\n' +
+                            '<input type="checkbox" value=" ' + status.tagId + ' " name="check" lay-skin="primary">\n' +
+                            '<div class="layui-unselect layui-form-checkbox" lay-skin="primary">\n' +
+                            '<i class="layui-icon"></i>\n' +
+                            '</div>\n' +
+                            '</div>\n' +
+                            '</td>\n' +
+                            '<td> ' + status.tagId + ' </td>\n' +
+                            '<td>\n' +
+                            ' '+ tagname +'\n' +
+                            '</td>\n' +
+                            '<td class="td-manage">\n' +
+                            '<button class="layui-btn layui-btn layui-btn-xs" onclick="x_admin_show(\'编辑\',\'admin-edit.html\')"><i\n' +
+                            'class="layui-icon">&#xe642;</i>编辑\n' +
+                            '</button>\n' +
+                            '<button class="layui-btn-danger layui-btn layui-btn-xs" onclick="tag_del(this,{$vo.tid})"\n' +
+                            'href="javascript:;"><i class="layui-icon">&#xe640;</i>删除\n' +
+                            '</button>\n' +
+                            '</td>\n' +
+                            '</tr>'
+                        $('#x-cate').append(_html);
+                        // $('#count').html(parseInt($('#count').text())+1);
+                    }else{
+                        layer.msg("增加失败", {icon: 5});
+                    }
+                }
+            })
+            return false;
+        });
+    });
+
+    // 单个删除
+    function tag_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            //发异步删除数据
+            $.ajax({
+                url:"{:url('Admin/tags/del')}",
+                data:{'id':id},
+                type: "post" ,
+                dataType:'json',
+                success:function(status){
+                    if(status.status){
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!',{icon:1,time:1000});
+                        $('#count').html(parseInt($('#count').text())-1);
+                    }else{
+                        $(obj).parents("tr").remove();
+                    }
+                }
+            })
+        });
+    }
+
+    // 批量删除
+    function delAll(obj){
+        var tids = [];
+        $("input[name='check']:checked").each(function(index) {
+            tids[index] = $(this).val(); //逐个获取id
+        });
+        if(tids.length<=0){
+            layer.msg('未选择数据!', {icon: 5});
+            return false;
+        }
+        layer.confirm('确认删除所有选中吗？',function(index){
+            //发异步删除数据
+            $.ajax({
+                url:'{:url("Admin/tags/delAll")}',
+                data:{'tids':tids},
+                type: "post" ,
+                dataType:'json',
+                success:function(status){
+                    if(status.status){
+                        layer.msg('已删除!',{icon:1,time:1000});
+                        $("input[name='check']:checked").each(function(index) {
+                            // $("#all").prop('checked', false);
+                            $(this).parents('tr').remove();
+                            $('#count').html(parseInt($('#count').text())-1);
+                        });
+                    }else{
+                        $(obj).parents("tr").remove();
+                        layer.msg('删除失败,请重试!',{icon:1,time:1000});
+                    }
+                }
+            })
+        });
+    }
+</script>
+</body>
+
+</html>

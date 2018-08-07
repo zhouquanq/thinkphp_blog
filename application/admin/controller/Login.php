@@ -21,7 +21,7 @@ class Login extends Controller{
             $data = ['username' => $username, 'password' => $password];
             //验证是否符合验证器里定义(验证码)的规范,不符合返回错误信息
             if (!$validate->check($data)) {
-                return json($validate->getError());
+                return alert($validate->getError(),'/admin/login',5,2);
             }
             //查询数据试库
             $where['username'] = $username;
@@ -29,14 +29,10 @@ class Login extends Controller{
             $userInfo = Db::name('users')->where($where)->find();
             if ($userInfo && $userInfo['password'] === $password) {
                 //登录成功写入session
-//                $_SESSION['admin_id']=$userInfo['uid'];
-//                $_SESSION['admin_name']=$userInfo['username'];
                 Session::set('admin_id',$userInfo['uid']);
                 Session::set('admin_name',$userInfo['username']);
-//                $this->success('登录成功！', 'admin/index/index');
                 return alert('登录成功！','/admin',6,2);
             } else {
-//                $this->error('用户名或者密码错误！', 'admin/login/index');
                 return alert('用户名或密码错误！','/admin/login',5,2);
             }
         } else {
@@ -48,8 +44,8 @@ class Login extends Controller{
     }
     
     public function loginOut(){
-        session(null);
-//        $this->success('退出成功！', 'admin/login/index');
+        Session::delete('admin_id');
+        Session::delete('admin_name');
         return alert('退出成功！','/admin/login',6,2);
     }
 }
