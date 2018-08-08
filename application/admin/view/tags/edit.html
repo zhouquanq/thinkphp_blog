@@ -1,0 +1,63 @@
+{include file="common/header" /}
+<body>
+<div class="x-body">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="username" class="layui-form-label">
+                <span class="x-red">*</span>标签名
+            </label>
+            <div class="layui-input-inline">
+                <input type="hidden" id="tid" name="tid" value="{$Request.param.tid}">
+                <input type="text" id="tagName" name="tagName" required="" lay-verify="required"
+                       autocomplete="off" value="{$oldTag.tagname}" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>标签名
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+            </label>
+            <button  class="layui-btn" lay-filter="add" lay-submit="">
+                修改
+            </button>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form
+            ,layer = layui.layer;
+
+        //监听提交
+        form.on('submit(add)', function(data){
+            var tid = $('input[name="tid"]').val();
+            var tagName = $('input[name="tagName"]').val();
+            $.ajax({
+                url:"{:url('Admin/tags/edit')}",
+                data:{tid:tid,tagName:tagName},
+                type: "post" ,
+                dataType:'json',
+                success:function(status){
+                    if(status.status){
+                        // 获得frame索引并关闭
+                        layer.msg("修改成功", {icon:1,time:1000},function () {
+                            // 刷新
+                            parent.location.reload();
+                            // 获得frame索引并关闭当前frame
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        });
+
+                    }else{
+                    }
+                }
+            })
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>

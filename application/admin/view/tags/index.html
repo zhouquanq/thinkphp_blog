@@ -2,7 +2,7 @@
 <body>
 <div class="x-nav">
       <span class="layui-breadcrumb">
-        <a href="{:url('Admin/index/welCome')}">首页</a>
+        <a href="javascript:volid(0);">首页</a>
         <a>
           <cite>标签列表</cite></a>
       </span>
@@ -20,7 +20,7 @@
     </div>
     <xblock>
         <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-        <span class="x-right" style="line-height:40px">共有数据：10086 条</span>
+        <span class="x-right" style="line-height:40px">共有数据：<span id="count">{$count}</span> 条</span>
     </xblock>
     <table class="layui-table layui-form">
         <thead>
@@ -48,7 +48,7 @@
                 {$vo.tagname}
             </td>
             <td class="td-manage">
-                <button class="layui-btn layui-btn layui-btn-xs" onclick="x_admin_show('编辑','admin-edit.html')"><i
+                <button class="layui-btn layui-btn layui-btn-xs" onclick="tag_edit('编辑标签','{:url(\'Admin/tags/edit\',[\'tid\'=>$vo[\'tid\']])}','','220')"><i
                     class="layui-icon">&#xe642;</i>编辑
                 </button>
                 <button class="layui-btn-danger layui-btn layui-btn-xs" onclick="tag_del(this,{$vo.tid})"
@@ -85,7 +85,7 @@
                 dataType:'json',
                 success:function(status){
                     if(status.status){
-                        layer.msg("增加成功", {icon: 1});
+                        layer.msg(status.message, {icon: 1});
                         var _html = '<tr cate-id=\'1\' fid=\'0\'>\n' +
                             '<td>\n' +
                             '<div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id=\'2\'>\n' +
@@ -95,29 +95,36 @@
                             '</div>\n' +
                             '</div>\n' +
                             '</td>\n' +
-                            '<td> ' + status.tagId + ' </td>\n' +
+                            '<td>'+status.tagId+'</td>\n' +
                             '<td>\n' +
                             ' '+ tagname +'\n' +
                             '</td>\n' +
                             '<td class="td-manage">\n' +
-                            '<button class="layui-btn layui-btn layui-btn-xs" onclick="x_admin_show(\'编辑\',\'admin-edit.html\')"><i\n' +
-                            'class="layui-icon">&#xe642;</i>编辑\n' +
+                            '<button class="layui-btn layui-btn layui-btn-xs" onclick="tag_edit(\'编辑标签\',\'/Admin/tags/edit/tid/'+status.tagId+'.html\',\'\',\'220\')">\n' +
+                            '<i class="layui-icon">&#xe642;</i>编辑\n' +
                             '</button>\n' +
-                            '<button class="layui-btn-danger layui-btn layui-btn-xs" onclick="tag_del(this,{$vo.tid})"\n' +
+                            '<button class="layui-btn-danger layui-btn layui-btn-xs" onclick="tag_del(this,'+status.tagId+')"\n' +
                             'href="javascript:;"><i class="layui-icon">&#xe640;</i>删除\n' +
                             '</button>\n' +
                             '</td>\n' +
                             '</tr>'
                         $('#x-cate').append(_html);
-                        // $('#count').html(parseInt($('#count').text())+1);
+                        $('input[name="tagname"]').val('');
+                        $('#count').html(parseInt($('#count').text())+1);
                     }else{
-                        layer.msg("增加失败", {icon: 5});
+                        layer.msg(status.message, {icon: 5});
                     }
                 }
             })
             return false;
         });
     });
+
+    // 编辑
+    function tag_edit (title,url,w,h) {
+        console.log(url);
+        x_admin_show(title,url,w,h);
+    }
 
     // 单个删除
     function tag_del(obj,id){
