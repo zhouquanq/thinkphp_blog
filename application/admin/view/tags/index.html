@@ -27,13 +27,12 @@
         <tr>
             <th width="20">
                 <div class="layui-unselect header layui-form-checkbox" lay-skin="primary">
-                    <!--<i class="layui-icon">&#xe605;</i></div>-->
                 <input type="checkbox" lay-skin="primary" lay-filter="checkAll">
                 </div>
             </th>
             <th width="70">ID</th>
             <th>标签名</th>
-            <th width="220">操作</th>
+            <th width="60">操作</th>
         </thead>
         <tbody id="x-cate">
         {volist name="tags" id="vo"}
@@ -48,12 +47,18 @@
                 {$vo.tagname}
             </td>
             <td class="td-manage">
-                <button class="layui-btn layui-btn layui-btn-xs" onclick="tag_edit('编辑标签','{:url(\'Admin/tags/edit\',[\'tid\'=>$vo[\'tid\']])}','','220')"><i
-                    class="layui-icon">&#xe642;</i>编辑
-                </button>
-                <button class="layui-btn-danger layui-btn layui-btn-xs" onclick="tag_del(this,{$vo.tid})"
-                        href="javascript:;"><i class="layui-icon">&#xe640;</i>删除
-                </button>
+                <a title="修改标签" onclick="tag_edit('编辑标签','{:url(\'Admin/tags/edit\',[\'tid\'=>$vo[\'tid\']])}','','220')" href="javascript:;">
+                    <i class="layui-icon" style="font-size: 25px;">&#xe642;</i>
+                </a>
+                <a title="删除标签" onclick="tag_del(this,{$vo.tid})">
+                    <i class="layui-icon" style="font-size: 25px;">&#xe640;</i>
+                </a>
+                <!--<button class="layui-btn layui-btn layui-btn-xs" onclick="tag_edit('编辑标签','{:url(\'Admin/tags/edit\',[\'tid\'=>$vo[\'tid\']])}','','220')"><i-->
+                    <!--class="layui-icon">&#xe642;</i>编辑-->
+                <!--</button>-->
+                <!--<button class="layui-btn-danger layui-btn layui-btn-xs" onclick="tag_del(this,{$vo.tid})"-->
+                        <!--href="javascript:;"><i class="layui-icon">&#xe640;</i>删除-->
+                <!--</button>-->
             </td>
         </tr>
         {/volist}
@@ -100,12 +105,18 @@
                             ' '+ tagname +'\n' +
                             '</td>\n' +
                             '<td class="td-manage">\n' +
-                            '<button class="layui-btn layui-btn layui-btn-xs" onclick="tag_edit(\'编辑标签\',\'/Admin/tags/edit/tid/'+status.tagId+'.html\',\'\',\'220\')">\n' +
-                            '<i class="layui-icon">&#xe642;</i>编辑\n' +
-                            '</button>\n' +
-                            '<button class="layui-btn-danger layui-btn layui-btn-xs" onclick="tag_del(this,'+status.tagId+')"\n' +
-                            'href="javascript:;"><i class="layui-icon">&#xe640;</i>删除\n' +
-                            '</button>\n' +
+                            '<a title="修改标签" onclick="tag_edit(\'编辑标签\',\'/Admin/tags/edit/tid/'+status.tagId+'.html\',\'\',\'220\')" href="javascript:;">\n' +
+                            '<i class="layui-icon" style="font-size: 25px;">&#xe642;</i>\n' +
+                            '</a>\n' +
+                            '<a title="删除标签" onclick="tag_del(this,'+status.tagId+')">\n' +
+                            '<i class="layui-icon" style="font-size: 25px;">&#xe640;</i>\n' +
+                            '</a>\n' +
+                            // '<button class="layui-btn layui-btn layui-btn-xs" onclick="tag_edit(\'编辑标签\',\'/Admin/tags/edit/tid/'+status.tagId+'.html\',\'\',\'220\')">\n' +
+                            // '<i class="layui-icon">&#xe642;</i>编辑\n' +
+                            // '</button>\n' +
+                            // '<button class="layui-btn-danger layui-btn layui-btn-xs" onclick="tag_del(this,'+status.tagId+')"\n' +
+                            // 'href="javascript:;"><i class="layui-icon">&#xe640;</i>删除\n' +
+                            // '</button>\n' +
                             '</td>\n' +
                             '</tr>'
                         $('#x-cate').append(_html);
@@ -128,7 +139,7 @@
 
     // 单个删除
     function tag_del(obj,id){
-        layer.confirm('确认要删除吗？',function(index){
+        layer.confirm('确认要删除'+id+'吗 ？',function(index){
             //发异步删除数据
             $.ajax({
                 url:"{:url('Admin/tags/del')}",
@@ -138,7 +149,7 @@
                 success:function(status){
                     if(status.status){
                         $(obj).parents("tr").remove();
-                        layer.msg('已删除!',{icon:1,time:1000});
+                        layer.msg('已删除 !',{icon:1,time:1000});
                         $('#count').html(parseInt($('#count').text())-1);
                     }else{
                         $(obj).parents("tr").remove();
@@ -155,10 +166,10 @@
             tids[index] = $(this).val(); //逐个获取id
         });
         if(tids.length<=0){
-            layer.msg('未选择数据!', {icon: 5});
+            layer.msg('未选择数据 !', {icon: 5});
             return false;
         }
-        layer.confirm('确认删除所有选中吗？',function(index){
+        layer.confirm('确认删除'+tids+'吗 ？',function(index){
             //发异步删除数据
             $.ajax({
                 url:'{:url("Admin/tags/delAll")}',
@@ -167,7 +178,7 @@
                 dataType:'json',
                 success:function(status){
                     if(status.status){
-                        layer.msg('已删除!',{icon:1,time:1000});
+                        layer.msg('已删除 !',{icon:1,time:1000});
                         $("input[name='check']:checked").each(function(index) {
                             // $("#all").prop('checked', false);
                             $(this).parents('tr').remove();
@@ -175,7 +186,7 @@
                         });
                     }else{
                         $(obj).parents("tr").remove();
-                        layer.msg('删除失败,请重试!',{icon:1,time:1000});
+                        layer.msg('删除失败,请重试 !',{icon:1,time:1000});
                     }
                 }
             })

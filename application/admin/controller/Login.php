@@ -25,12 +25,13 @@ class Login extends Controller{
             }
             //查询数据试库
             $where['username'] = $username;
-            $where['is_admin'] = 1;
+            $where['is_admin'] = '是';
             $userInfo = Db::name('users')->where($where)->find();
             if ($userInfo && $userInfo['password'] === $password) {
                 //登录成功写入session
                 Session::set('admin_id',$userInfo['uid']);
                 Session::set('admin_name',$userInfo['username']);
+                Session::set('admin_nickname',$userInfo['nickname']);
                 return alert('登录成功！','/admin',6,2);
             } else {
                 return alert('用户名或密码错误！','/admin/login',5,2);

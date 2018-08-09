@@ -6,10 +6,13 @@ use \think\Session;
 
 class Auth extends controller
 {
-    public function _initialize()
-    {
+    public function _initialize(){
         if(!Session::has('admin_id') || !Session::has('admin_name')){
             $this->error('非法登录，信不信打死你！','admin/login/index');
         }
+    }
+    
+    public function serverInfo(){
+    
     }
 }
