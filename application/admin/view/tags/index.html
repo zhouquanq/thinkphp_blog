@@ -47,7 +47,7 @@
                 {$vo.tagname}
             </td>
             <td class="td-manage">
-                <a title="修改标签" onclick="tag_edit('编辑标签','{:url(\'Admin/tags/edit\',[\'tid\'=>$vo[\'tid\']])}','','220')" href="javascript:;">
+                <a title="修改标签" onclick="tag_edit('编辑标签','{:url(\'Admin/tags/edit\',[\'tid\'=>$vo[\'tid\']])}','600','220')" href="javascript:;">
                     <i class="layui-icon" style="font-size: 25px;">&#xe642;</i>
                 </a>
                 <a title="删除标签" onclick="tag_del(this,{$vo.tid})">
@@ -81,7 +81,6 @@
         //添加标签
         form.on('submit(add)', function(data){
             var tagname = $('input[name="tagname"]').val();
-            //发异步，把数据提交给php
             //发异步删除数据
             $.ajax({
                 url:"{:url('Admin/tags/add')}",
@@ -105,7 +104,7 @@
                             ' '+ tagname +'\n' +
                             '</td>\n' +
                             '<td class="td-manage">\n' +
-                            '<a title="修改标签" onclick="tag_edit(\'编辑标签\',\'/Admin/tags/edit/tid/'+status.tagId+'.html\',\'\',\'220\')" href="javascript:;">\n' +
+                            '<a title="修改标签" onclick="tag_edit(\'编辑标签\',\'/Admin/tags/edit/tid/'+status.tagId+'.html\',\'600\',\'220\')" href="javascript:;">\n' +
                             '<i class="layui-icon" style="font-size: 25px;">&#xe642;</i>\n' +
                             '</a>\n' +
                             '<a title="删除标签" onclick="tag_del(this,'+status.tagId+')">\n' +
@@ -139,7 +138,7 @@
 
     // 单个删除
     function tag_del(obj,id){
-        layer.confirm('确认要删除'+id+'吗 ？',function(index){
+        layer.confirm('确认要删除吗 ？',function(index){
             //发异步删除数据
             $.ajax({
                 url:"{:url('Admin/tags/del')}",
@@ -169,7 +168,7 @@
             layer.msg('未选择数据 !', {icon: 5});
             return false;
         }
-        layer.confirm('确认删除'+tids+'吗 ？',function(index){
+        layer.confirm('确认删除选中的吗 ？',function(index){
             //发异步删除数据
             $.ajax({
                 url:'{:url("Admin/tags/delAll")}',

@@ -4,7 +4,7 @@
       <span class="layui-breadcrumb">
         <a href="javascript:volid(0);">首页</a>
         <a>
-          <cite>管理员列表</cite></a>
+          <cite>会员列表</cite></a>
       </span>
     <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
        href="javascript:location.replace(location.href);" title="刷新">
@@ -21,7 +21,7 @@
     </div>
     <xblock>
         <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-        <button class="layui-btn" onclick="user_add('添加用户','{:url(\'Admin/user/add\')}','800','600')" href="javascript:;"><i class="layui-icon"></i>添加
+        <button class="layui-btn" onclick="x_admin_show('添加用户','./member-add.html',600,400)"><i class="layui-icon"></i>添加
         </button>
         <span class="x-right" style="line-height:40px">共有数据：<span id="count">{$count}</span> 条</span>
     </xblock>
@@ -108,12 +108,6 @@
             elem: '#end' //指定元素
         });
     });
-
-    // 编辑
-    function user_add (title,url,w,h) {
-        console.log(url);
-        x_admin_show(title,url,w,h);
-    }
 
     /*用户-停用*/
     function switch_status(obj, id) {
