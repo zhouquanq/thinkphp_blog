@@ -41,16 +41,17 @@
                 dataType:'json',
                 success:function(status){
                     if(status.status){
-                        // 获得frame索引并关闭
-                        layer.msg("修改成功", {icon:1,time:1000},function () {
-                            // 刷新
+                        layer.msg("修改成功！", {icon:1,time:1000},function () {
                             parent.location.reload();
-                            // 获得frame索引并关闭当前frame
                             var index = parent.layer.getFrameIndex(window.name);
                             parent.layer.close(index);
                         });
-
                     }else{
+                        layer.msg("修改失败！", {icon:1,time:1000},function () {
+                            parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        });
                     }
                 }
             })

@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 use \think\Db;
 use \think\Request;
+use \think\Loader;
 
 class User extends Auth
 {
@@ -35,32 +36,75 @@ class User extends Auth
     
     public function add(){
         if(Request::instance()->isPost()){
-            $data['tagname'] = input('post.tagname');
-            $map['tagname'] = $data['tagname'];
-            $newTag =  Db::name('tag')->where($map)->find();
-            if($newTag){
+            $data = input('post.');
+            $map['username'] = $data['username'];
+            $newUser =  Db::name('users')->where($map)->find();
+            if($newUser){
                 $status = array(
                     'status'    => 0,
-                    'message'   => '添加失败，标签已存在！',
+                    'message'   => '添加失败，用户已存在！',
                 );
                 return $status;
             }
-            $re =  Db::name('tag')->insert($data);
-            $tagId = Db::name('user')->getLastInsID();
-            if($re || !empty($newTag)){
+//            调用验证器
+            $validate = Loader::validate('User');
+            //验证是否符合验证器里定义(验证码)的规范,不符合返回错误信息
+            if (!$validate->check($data)) {
+                $status = array(
+                    'status'    => 0,
+                    'message'   => $validate->getError(),
+                );
+                return $status;
+            }
+//            密码加密
+            $data['password'] = md5($data['password']);
+            $re =  Db::name('users')->insert($data);
+            if($re){
                 $status = array(
                     'status'    => 1,
-                    'tagId'     => $tagId,
-                    'message'   => '添加成功',
+                    'message'   => '用户添加成功！',
                 );
             }else{
                 $status = array(
                     'status'    => 0,
-                    'message'   => '添加失败',
+                    'message'   => '用户添加失败！',
                 );
             }
             return $status;
         }else{
+            return $this->fetch();
+        }
+    }
+    
+    public function edit(){
+        if(Request::instance()->isPost()){
+            $data = input('post.');
+            $validate = Loader::validate('User');
+            //验证是否符合验证器里定义(验证码)的规范,不符合返回错误信息
+            if (!$validate->check($data)) {
+                $status = array(
+                    'status'    => 0,
+                    'message'   => $validate->getError(),
+                );
+                return $status;
+            }
+            $re =  Db::name('users')->where('uid',$data['uid'])->update($data);
+            if($re){
+                $status = array(
+                    'status'    => 1,
+                    'message'   => '用户修改成功！',
+                );
+            }else{
+                $status = array(
+                    'status'    => 0,
+                    'message'   => '用户修改失败！',
+                );
+            }
+            return $status;
+        }else{
+            $uid = input('uid');
+            $oldUser =  Db::name('users')->where("uid = $uid")->find();
+            $this->assign('oldUser',$oldUser);
             return $this->fetch();
         }
     }

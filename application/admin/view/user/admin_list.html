@@ -13,8 +13,6 @@
 <div class="x-body">
     <div class="layui-row">
         <form class="layui-form layui-col-md12 x-so" method="get" action="{:url('Admin/user/adminList')}">
-            <!--<input class="layui-input" placeholder="开始日" name="start" id="start">-->
-            <!--<input class="layui-input" placeholder="截止日" name="end" id="end">-->
             <input type="text" name="find" placeholder="请输入管理员" autocomplete="off" class="layui-input">
             <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
         </form>
@@ -33,7 +31,7 @@
                     <input type="checkbox" lay-skin="primary" lay-filter="checkAll">
                 </div>
             </th>
-            <th>ID</th>
+            <th lay-data="{field:'score', width:80, sort: true}">ID</th>
             <th>用户名</th>
             <th>昵称</th>
             <th>超管</th>
@@ -78,7 +76,7 @@
                 <a onclick="switch_status(this,{$vo.uid})" href="javascript:;" title="切换状态">
                     <i class="layui-icon" style="font-size: 25px;">&#xe673;</i>
                 </a>
-                <a title="编辑用户" onclick="x_admin_show('编辑','member-edit.html',600,400)" href="javascript:;">
+                <a title="编辑用户" onclick="user_edit('编辑用户','{:url(\'Admin/user/edit\',[\'uid\'=>$vo[\'uid\']])}','800','600')" href="javascript:;">
                     <i class="layui-icon" style="font-size: 25px;">&#xe642;</i>
                 </a>
                 <!--<a onclick="x_admin_show('修改密码','member-password.html',600,400)" title="修改密码" href="javascript:;">-->
@@ -95,22 +93,23 @@
     <div class="layui-box layui-laypage layui-laypage-default">{$users->render()}</div>
 </div>
 <script>
-    layui.use('laydate', function () {
-        var laydate = layui.laydate;
-
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#start' //指定元素
+    layui.use(['form'], function () {
+        form = layui.form;
+        //全选
+        form.on('checkbox(checkAll)', function(data){
+            $("input[type='checkbox']").prop("checked", data.elem.checked);
+            form.render('checkbox');
         });
+    })
 
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#end' //指定元素
-        });
-    });
-
-    // 编辑
+    // 添加
     function user_add (title,url,w,h) {
+        console.log(url);
+        x_admin_show(title,url,w,h);
+    }
+
+    // 添加
+    function user_edit (title,url,w,h) {
         console.log(url);
         x_admin_show(title,url,w,h);
     }
@@ -195,13 +194,5 @@
         });
     }
 </script>
-<script>var _hmt = _hmt || [];
-(function () {
-    var hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(hm, s);
-})();</script>
 </body>
-
 </html>
