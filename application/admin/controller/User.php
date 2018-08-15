@@ -42,13 +42,11 @@ class User extends Auth
             if($newUser){
                 $status = array(
                     'status'    => 0,
-                    'message'   => '添加失败，用户已存在！',
+                    'message'   => '添加失败，用户名已存在！',
                 );
                 return $status;
             }
-//            调用验证器
             $validate = Loader::validate('User');
-            //验证是否符合验证器里定义(验证码)的规范,不符合返回错误信息
             if (!$validate->check($data)) {
                 $status = array(
                     'status'    => 0,
@@ -56,7 +54,6 @@ class User extends Auth
                 );
                 return $status;
             }
-//            密码加密
             $data['password'] = md5($data['password']);
             $re =  Db::name('users')->insert($data);
             if($re){
@@ -112,6 +109,15 @@ class User extends Auth
     public function editStatus(){
         if(Request::instance()->isPost()){
             $id = input('post.id');
+            $map['uid'] = $id;
+            $User =  Db::name('users')->where($map)->find();
+            if($User['supper'] == '是'){
+                $status = array(
+                    'status'    => 0,
+                    'message'   => '超级管理员无法进行此操作！',
+                );
+                return $status;
+            }
             $status = input('post.status');
             $status == '正常' ? $lock = '锁定' : $lock =  '正常' ;
             $re =  Db::name('users')->where('uid',$id)->update(['is_lock' => $lock]);

@@ -12,16 +12,14 @@
 </div>
 <div class="x-body">
     <div class="layui-row">
-        <form class="layui-form layui-col-md12 x-so" method="get" action="{:url('Admin/user/adminList')}">
-            <!--<input class="layui-input" placeholder="开始日" name="start" id="start">-->
-            <!--<input class="layui-input" placeholder="截止日" name="end" id="end">-->
-            <input type="text" name="find" placeholder="请输入管理员" autocomplete="off" class="layui-input">
+        <form class="layui-form layui-col-md12 x-so" method="get" action="{:url('Admin/user/userList')}">
+            <input type="text" name="find" placeholder="请输入会员名称" autocomplete="off" class="layui-input">
             <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
         </form>
     </div>
     <xblock>
         <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-        <button class="layui-btn" onclick="x_admin_show('添加用户','./member-add.html',600,400)"><i class="layui-icon"></i>添加
+        <button class="layui-btn" onclick="user_add('添加用户','{:url(\'Admin/user/add\')}','800','600')" href="javascript:;"><i class="layui-icon"></i>添加
         </button>
         <span class="x-right" style="line-height:40px">共有数据：<span id="count">{$count}</span> 条</span>
     </xblock>
@@ -33,7 +31,7 @@
                     <input type="checkbox" lay-skin="primary" lay-filter="checkAll">
                 </div>
             </th>
-            <th>ID</th>
+            <th lay-data="{field:'score', width:80, sort: true}">ID</th>
             <th>用户名</th>
             <th>昵称</th>
             <th>超管</th>
@@ -78,7 +76,7 @@
                 <a onclick="switch_status(this,{$vo.uid})" href="javascript:;" title="切换状态">
                     <i class="layui-icon" style="font-size: 25px;">&#xe673;</i>
                 </a>
-                <a title="编辑用户" onclick="x_admin_show('编辑','member-edit.html',600,400)" href="javascript:;">
+                <a title="编辑用户" onclick="user_edit('编辑用户','{:url(\'Admin/user/edit\',[\'uid\'=>$vo[\'uid\']])}','800','600')" href="javascript:;">
                     <i class="layui-icon" style="font-size: 25px;">&#xe642;</i>
                 </a>
                 <!--<a onclick="x_admin_show('修改密码','member-password.html',600,400)" title="修改密码" href="javascript:;">-->
@@ -95,19 +93,26 @@
     <div class="layui-box layui-laypage layui-laypage-default">{$users->render()}</div>
 </div>
 <script>
-    layui.use('laydate', function () {
-        var laydate = layui.laydate;
-
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#start' //指定元素
+    layui.use(['form'], function () {
+        form = layui.form;
+        //全选
+        form.on('checkbox(checkAll)', function(data){
+            $("input[type='checkbox']").prop("checked", data.elem.checked);
+            form.render('checkbox');
         });
+    })
 
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#end' //指定元素
-        });
-    });
+    // 添加
+    function user_add (title,url,w,h) {
+        console.log(url);
+        x_admin_show(title,url,w,h);
+    }
+
+    // 添加
+    function user_edit (title,url,w,h) {
+        console.log(url);
+        x_admin_show(title,url,w,h);
+    }
 
     /*用户-停用*/
     function switch_status(obj, id) {
@@ -126,7 +131,7 @@
                         $('#status'+id+' em').html(status.lock);
                         (status.lock == '正常') ? $('#status'+id+' div.layui-unselect').addClass(status.cls) : $('#status'+id+' div.layui-unselect').removeClass(status.cls);;
                     }else{
-                        layer.msg('修改失败 !',{icon:2,time:1000});
+                        layer.msg(status.message,{icon:5,time:1000});
                     }
                 }
             })
@@ -182,20 +187,12 @@
                         });
                     }else{
                         $(obj).parents("tr").remove();
-                        layer.msg('删除失败,请重试!',{icon:1,time:1000});
+                        layer.msg('删除失败,请重试!',{icon:5,time:1000});
                     }
                 }
             })
         });
     }
 </script>
-<script>var _hmt = _hmt || [];
-(function () {
-    var hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(hm, s);
-})();</script>
 </body>
-
 </html>

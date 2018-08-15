@@ -131,7 +131,7 @@
                         $('#status'+id+' em').html(status.lock);
                         (status.lock == '正常') ? $('#status'+id+' div.layui-unselect').addClass(status.cls) : $('#status'+id+' div.layui-unselect').removeClass(status.cls);;
                     }else{
-                        layer.msg('修改失败 !',{icon:2,time:1000});
+                        layer.msg(status.message,{icon:5,time:1000});
                     }
                 }
             })
@@ -187,7 +187,7 @@
                         });
                     }else{
                         $(obj).parents("tr").remove();
-                        layer.msg('删除失败,请重试!',{icon:1,time:1000});
+                        layer.msg('删除失败,请重试!',{icon:5,time:1000});
                     }
                 }
             })
