@@ -9,16 +9,24 @@ class Category extends Auth
     {
 
     	//获取总条数
-        // $count = Db::name('category')->order('tid asc')->count();
-        // $category = Db::name('category')->order('cid asc')->paginate(10);
+         $count = Db::name('category')->count();
+//         $category = Db::name('category')->order('cid asc')->paginate(10);
         $category = Db::name('category')->order('cid asc')->select();
         $data=$this->getTree($category);
-//        p($res);
-        // $this->assign('count',$count);
+        $this->assign('count',$count);
         $this->assign('data',$data);
         return $this->fetch();
     }
     
+    public function categoryData(){
+        $count = Db::name('category')->count();
+        $category = Db::name('category')->select();
+        $data['code'] = 0;
+        $data['msg'] = 'ok';
+        $data['data'] = $category;
+        return json($data);
+    }
+//
     //无限极递归
     public function getTree($data,$pid=0,$level=0){
         static $arr=array();
