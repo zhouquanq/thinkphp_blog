@@ -11,10 +11,6 @@ class Category extends Auth
 
     	//获取总条数
          $count = Db::name('category')->count();
-//        $category = Db::name('category')->order('cid asc')->paginate(10);
-//        $category = Db::name('category')->order('cid asc')->select();
-//        $data=$this->getTree($category);
-//        $this->assign('data',$data);
         $this->assign('count',$count);
         
         return $this->fetch();
@@ -22,7 +18,7 @@ class Category extends Auth
     
     public function categoryData(){
         $count = Db::name('category')->count();
-        $category = Db::name('category')->select();
+        $category = Db::name('category')->order('cid asc')->select();
         $data['code'] = 0;
         $data['msg'] = 'ok';
         $data['data'] = $category;
@@ -61,16 +57,71 @@ class Category extends Auth
         }
     }
     
-    //无限极递归
-//    public function getTree($data,$pid=0,$level=0){
-//        static $arr=array();
-//        foreach($data as $key=>$value){
-//            if($value['pid'] == $pid){
-//                $value['level']=$level;     //用来作为在模版进行层级的区分
-//                $arr[] = $value;            //把内容存进去
-//                $this->getTree($data,$value['cid'],$level+1);    //回调进行无线递归
-//            }
-//        }
-//        return $arr;
-//    }
+    public function del(){
+        if(Request::instance()->isPost()){
+            $id = input('post.id');
+            $map['pid'] = $id;
+            $find =  Db::name('category')->where($map)->find();
+            if($find){
+                $status = array(
+                    'status'    => 0,
+                    'message'   => '删除失败，请先删除子分类！',
+                );
+                return $status;
+            }
+            $re =  Db::name('category')->delete($id);
+            if($re){
+                $status = array(
+                    'status' => 1,
+                    'message'   => '删除成功！',
+                );
+            }else{
+                $status = array(
+                    'status' => 0,
+                    'message'   => '删除失败！',
+                );
+            }
+            return $status;
+        }
+    }
+    
+    public function cateEdit(){
+        if(Request::instance()->isPost()){
+            $where['cname'] = array('eq',input('post.cname'));
+            $where['cid'] = array('neq',input('post.cid'));
+            $find =  Db::name('category')->where($where)->find();
+            $map['cid'] = input('post.cid');
+            $map['cname'] = input('post.cname');
+            $map['csort'] = input('post.csort');
+            $map['is_show'] = input('post.is_show');
+            if($find){
+                $status = array(
+                    'status'    => 0,
+                    'message'   => '修改失败，分类已存在！',
+                );
+                return $status;
+            }
+            
+            $re =  Db::name('category')->update($map);
+            if($re){
+                $status = array(
+                    'status'    => 1,
+                    'message'   => '修改成功',
+                );
+            }else{
+                $status = array(
+                    'status'    => 0,
+                    'message'   => '修改失败',
+                );
+            }
+            return $status;
+        }else{
+            $id = input('id');
+            $allCate =  Db::name('category')->select();
+            $oldCate =  Db::name('category')->where("cid = $id")->find();
+            $this->assign('allCate',$allCate);
+            $this->assign('oldCate',$oldCate);
+            return $this->fetch();
+        }
+    }
 }

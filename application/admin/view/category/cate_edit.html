@@ -1,0 +1,94 @@
+{include file="common/header" /}
+<body>
+<div class="x-body layui-anim layui-anim-up">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                所属分类
+            </label>
+            <div class="layui-input-inline">
+                <select name="csort" lay-verify="">
+                    {volist name="allCate" id="vo"}
+                    <option value='{$vo.cid}'>{$vo.cname}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="cname" class="layui-form-label">
+                <span class="x-red">*</span>分类名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="cname" name="cname" value="{$oldCate.cname}" required="" lay-verify="required|min:3|max:16"
+                       autocomplete="off" class="layui-input">
+                <input type="hidden" name="cid" value="{:input('param.id')}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                排序
+            </label>
+            <div class="layui-input-inline">
+                <select name="csort" lay-verify="">
+                    <?php
+                        for ($i=1; $i <= 100; $i++) {
+                            echo "<option value='$i'>$i</option>";
+                        }
+                    ?>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_show" value="1" title="显示" {if condition="$oldCate.is_show eq '1'"}checked{/if}>
+                <input type="radio" name="is_show" value="0" title="隐藏" {if condition="$oldCate.is_show eq '0'"}checked{/if}>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="add" class="layui-form-label">
+            </label>
+            <button  class="layui-btn" id="add" lay-filter="add" lay-submit="">
+                增加分类
+            </button>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form
+            ,layer = layui.layer;
+        //监听提交
+        form.on('submit(add)', function(data){
+            console.log(data);
+            var cid,cname,csort,is_show;
+            cid      = $('input[name="cid"]').val();
+            cname    = $('input[name="cname"]').val();
+            csort    = $('select[name="csort"]').val();
+            is_show  = $('input[name="is_show"]:checked').val();
+            $.ajax({
+                url:"{:url('Admin/category/cateEdit')}",
+                data:{'cid':cid,'cname':cname,'csort':csort,'is_show':is_show},
+                type: "post" ,
+                dataType:'json',
+                success:function(status){
+                    console.log(status);
+                    if(status.status){
+                        layer.msg(status.message, {icon:1,time:1000},function () {
+                            parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        });
+                    }else{
+                        layer.msg(status.message, {icon:2,time:1000});
+                    }
+                }
+            })
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>

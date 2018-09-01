@@ -102,15 +102,41 @@
             console.log(data)
             var layEvent = obj.event;
             if (layEvent === 'del') {
-                layer.msg('删除' + data.id);
+                layer.confirm('确认要删除吗 ？',function(index){
+                    //发异步删除数据
+                    $.ajax({
+                        url:"{:url('Admin/Category/del')}",
+                        data:{'id':data.id},
+                        type: "post" ,
+                        dataType:'json',
+                        success:function(status){
+                            if(status.status){
+                                layer.msg(status.message, {icon:1,time:1000},function () {
+                                    location.reload();
+                                });
+                            }else{
+                                layer.msg(status.message,{icon:2,time:1000});
+                            }
+                        }
+                    })
+                });
             } else if (layEvent === 'edit') {
-                layer.msg('修改' + data.id);
+                // layer.msg('修改' + data.id);
+                var url = "{:url('Admin/Category/cateEdit',['id'=>"cid"])}";
+                url1 =  url.replace("cid",data.id);
+                cate_edit('修改分类',url1,600,400);
             }
         });
     });
 
     // 添加顶级
     function top_cate_add (title,url,w,h) {
+        console.log(url);
+        x_admin_show(title,url,w,h);
+    }
+
+    // 修改分类
+    function cate_edit (title,url,w,h) {
         console.log(url);
         x_admin_show(title,url,w,h);
     }
