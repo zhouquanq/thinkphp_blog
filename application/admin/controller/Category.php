@@ -10,7 +10,7 @@ class Category extends Auth
     {
 
     	//获取总条数
-         $count = Db::name('category')->count();
+        $count = Db::name('category')->count();
         $this->assign('count',$count);
         
         return $this->fetch();
